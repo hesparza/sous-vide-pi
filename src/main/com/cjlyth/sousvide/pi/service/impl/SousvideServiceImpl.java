@@ -60,6 +60,9 @@ public class SousvideServiceImpl implements SousvideService {
 	@Value("${read.serial.script.abs.path}")
 	private String readSerialScriptAbsPath;
 	
+	@Value("${sleep.main.thread.milliseconds}")
+	private int sleepMainThreadMilliseconds;
+	
 	private static final String GET = "GET";
 	private static final String POST = "POST";
 	private static final Double DEFAULT_TEMP = 0.0; //In Celcius
@@ -75,38 +78,52 @@ public class SousvideServiceImpl implements SousvideService {
 		
 		//Initialize
 		GpioPinDigitalOutput output1 = initializeGPIO();
-		
 		CommandLine cmdLine = initializePythonCmdLine();
 		if (cmdLine == null) {
 			logger.error("{} ERROR!! Could not initialize command line, exiting..");
 			return;
 		}
 		
-		//Get configuration
-		configuration = getConfiguration();
-		if (configuration == null) {
-			logger.error("{} ERROR!! Could not get configuration correctly, using: {}", METHOD_NAME, configuration);
-			targetTemp = DEFAULT_TEMP;
-		}
-		targetTemp =  configuration.getTemperature();
-		
-		//Read current temperature
-		currentTemp = getCurrentTemperature(cmdLine);
-		if (currentTemp.equals(DEFAULT_TEMP)) {
-			logger.warn("{} WARNING!! Current temperature is set to {}", METHOD_NAME, DEFAULT_TEMP);
-		}
-
-		//Write current temperature
-		final boolean tempPostedOk = postCurrentTemperature(new LogTemp(currentTemp));
-		if (!tempPostedOk) {
-			logger.error("{} ERROR!! Could not post temperature correctly", METHOD_NAME);
-		}
-
-		//Control heater
-	    handleCurrentTemperature(targetTemp, currentTemp, output1);
+		//Main loop
+		for (;;) {
+			
+			//Get configuration
+			configuration = getConfiguration();
+			if (configuration == null) {
+				logger.error("{} ERROR!! Could not get configuration correctly, using: {}", METHOD_NAME, configuration);
+				targetTemp = DEFAULT_TEMP;
+			}
+			targetTemp =  configuration.getTemperature();
+			
+			//Read current temperature
+			currentTemp = getCurrentTemperature(cmdLine);
+			if (currentTemp.equals(DEFAULT_TEMP)) {
+				logger.warn("{} WARNING!! Current temperature is set to {}", METHOD_NAME, DEFAULT_TEMP);
+			}
+	
+			//Write current temperature
+			final boolean tempPostedOk = postCurrentTemperature(new LogTemp(currentTemp));
+			if (!tempPostedOk) {
+				logger.error("{} ERROR!! Could not post temperature correctly", METHOD_NAME);
+			}
+	
+			//Control heater
+		    handleCurrentTemperature(targetTemp, currentTemp, output1);
+		    
+		    doSleep(sleepMainThreadMilliseconds);
+		}		    
 	    
 	}
 	
+	private void doSleep(final int millis) {
+		final String METHOD_NAME = getClass().getName() + ".doSleep()";
+		logger.info("{} Sleeping for {} milliseconds" + METHOD_NAME, millis);
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			logger.error("{} FATAL ERROR!! while trying to sleep the process for {} milliseconds. Exception message is: ", METHOD_NAME, millis, e.getMessage());
+		}
+	}
 	private CommandLine initializePythonCmdLine() {
 		final String METHOD_NAME = getClass().getName() + ".initializePythonCmdLine()";
 		logger.info("{} Initilizing command line for python script", METHOD_NAME);
@@ -216,6 +233,9 @@ public class SousvideServiceImpl implements SousvideService {
 		} else if (currentTemp < lowerLimit) {
 			logger.info("{} Turning heater off", METHOD_NAME);
 			output1.setState(PinState.HIGH);
+		} else if (currentTemp == DEFAULT_TEMP) {
+			logger.warn("{} Current temperature is the default temperature, turning heater off for security reasons. Default temperature configured: {}", METHOD_NAME, DEFAULT_TEMP);
+			output1.setState(PinState.LOW);
 		} else {
 			logger.info("{} Nothing to do, heater is currently: {}, current temperature is: {}", METHOD_NAME, output1.getState(), currentTemp);
 		}

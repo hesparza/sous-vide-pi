@@ -97,9 +97,8 @@ public class SousvideServiceImpl implements SousvideService {
 		//Control heater
 	    GpioController gpio = GpioFactory.getInstance();	    
 	    final GpioPinDigitalOutput output1;
-	    output1 = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_08);
-//	    output1.setState(PinState.HIGH);
-//	    output1.pulse(1500); 
+	    output1 = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_18);
+	    output1.pulse(3000); 
 	    
 
         // provision gpio pin #01 as an output pin and turn on

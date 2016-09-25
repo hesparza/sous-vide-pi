@@ -1,6 +1,7 @@
 package com.cjlyth.sousvide.pi.util;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -33,6 +34,7 @@ public class HttpClient {
 		//urlBuilder.append("/");
 		try {
 			url = new URL(urlBuilder.toString());
+			OutputStreamWriter outputStreamWriter;
 			if (url.toString().toUpperCase().contains("HTTPS://")) {
 				httpsConnection = (HttpsURLConnection) url.openConnection();
 				httpsConnection.setRequestMethod(requestMethod);
@@ -62,12 +64,12 @@ public class HttpClient {
 				httpConnection.setRequestProperty("Content-Type", "application/json");
 				httpConnection.setRequestProperty("Accept", "application/json");
 				httpConnection.setConnectTimeout(5000);
-//				if (payload != null) {
-//					outputStreamWriter = new OutputStreamWriter(httpConnection.getOutputStream());
-//					//outputStreamWriter.write(payload);
-//					outputStreamWriter.flush();
-//					outputStreamWriter.close();
-//				}
+				if (payload != null) {
+					outputStreamWriter = new OutputStreamWriter(httpConnection.getOutputStream());
+					outputStreamWriter.write(payload);
+					outputStreamWriter.flush();
+					outputStreamWriter.close();
+				}
 				if (httpConnection.getResponseCode() == 200) {
 					response = IOUtils.toString(httpConnection.getInputStream());
 				} else {

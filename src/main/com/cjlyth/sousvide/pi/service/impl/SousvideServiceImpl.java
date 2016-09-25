@@ -117,7 +117,7 @@ public class SousvideServiceImpl implements SousvideService {
 	
 	private void doSleep(final int millis) {
 		final String METHOD_NAME = getClass().getName() + ".doSleep()";
-		logger.info("{} Sleeping for {} milliseconds" + METHOD_NAME, millis);
+		logger.info("{} Sleeping for {} milliseconds", METHOD_NAME, millis);
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
@@ -227,15 +227,15 @@ public class SousvideServiceImpl implements SousvideService {
 		final Double upperLimit = targetTemp + TEMP_TOLERANCE;
 		final Double lowerLimit = targetTemp - TEMP_TOLERANCE;
 		
-		if (currentTemp > upperLimit) {
+		if (currentTemp == DEFAULT_TEMP) {
+			logger.warn("{} Current temperature is the default temperature, turning heater off for security reasons. Default temperature configured: {}", METHOD_NAME, DEFAULT_TEMP);
+			output1.setState(PinState.LOW);
+		} else if (currentTemp > upperLimit) {
 			logger.info("{} Turning heater off", METHOD_NAME);
 			output1.setState(PinState.LOW);
 		} else if (currentTemp < lowerLimit) {
-			logger.info("{} Turning heater off", METHOD_NAME);
+			logger.info("{} Turning heater on", METHOD_NAME);
 			output1.setState(PinState.HIGH);
-		} else if (currentTemp == DEFAULT_TEMP) {
-			logger.warn("{} Current temperature is the default temperature, turning heater off for security reasons. Default temperature configured: {}", METHOD_NAME, DEFAULT_TEMP);
-			output1.setState(PinState.LOW);
 		} else {
 			logger.info("{} Nothing to do, heater is currently: {}, current temperature is: {}", METHOD_NAME, output1.getState(), currentTemp);
 		}

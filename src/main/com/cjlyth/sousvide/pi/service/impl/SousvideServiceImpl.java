@@ -90,7 +90,7 @@ public class SousvideServiceImpl implements SousvideService {
 			//Get configuration
 			configuration = getConfiguration();
 			if (configuration == null) {
-				logger.error("{} ERROR!! Could not get configuration correctly, using: {}", METHOD_NAME, configuration);
+				logger.error("{} ERROR!! Could not get configuration correctly, using: {}", METHOD_NAME, DEFAULT_TEMP);
 				targetTemp = DEFAULT_TEMP;
 			}
 			targetTemp =  configuration.getTemperature();

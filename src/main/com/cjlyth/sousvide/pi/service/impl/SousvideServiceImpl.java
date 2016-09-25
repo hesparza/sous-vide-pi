@@ -97,28 +97,29 @@ public class SousvideServiceImpl implements SousvideService {
 		//Control heater
 	    GpioController gpio = GpioFactory.getInstance();	    
 	    final GpioPinDigitalOutput output1;
-	    output1 = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_18);
+	    output1 = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01);
+	    logger.info("About to send pulse");
 	    output1.pulse(3000); 
 	    
 
-        // provision gpio pin #01 as an output pin and turn on
-        final GpioPinDigitalOutput pin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_04, "MyLED", PinState.HIGH);
-
-        // set shutdown state for this pin
-        pin.setShutdownOptions(true, PinState.LOW);
-
-        System.out.println("--> GPIO state should be: ON");
-
-        try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-        // turn off gpio pin #01
-        pin.low();
-        System.out.println("--> GPIO state should be: OFF");
+//        // provision gpio pin #01 as an output pin and turn on
+//        final GpioPinDigitalOutput pin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_04, "MyLED", PinState.HIGH);
+//
+//        // set shutdown state for this pin
+//        pin.setShutdownOptions(true, PinState.LOW);
+//
+//        System.out.println("--> GPIO state should be: ON");
+//
+//        try {
+//			Thread.sleep(5000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//        // turn off gpio pin #01
+//        pin.low();
+//        System.out.println("--> GPIO state should be: OFF");
 	    
 	}
 	

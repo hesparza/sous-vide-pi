@@ -43,12 +43,12 @@ public class HttpClient {
 				httpsConnection.setRequestProperty("Content-Type", "application/json");
 				httpsConnection.setRequestProperty("Accept", "application/text");
 				httpsConnection.setConnectTimeout(5000);
-//				if (payload != null) {
-//					outputStreamWriter = new OutputStreamWriter(httpsConnection.getOutputStream());
-//					outputStreamWriter.write(payload);
-//					outputStreamWriter.flush();
-//					outputStreamWriter.close();
-//				}
+				if (payload != null) {
+					outputStreamWriter = new OutputStreamWriter(httpsConnection.getOutputStream());
+					outputStreamWriter.write(payload);
+					outputStreamWriter.flush();
+					outputStreamWriter.close();
+				}
 				if (httpsConnection != null) {
 					if (httpsConnection.getResponseCode() == 200) {
 						response = IOUtils.toString(httpsConnection.getInputStream());
@@ -58,7 +58,7 @@ public class HttpClient {
 				}
 			} else {
 				httpConnection = (HttpURLConnection) url.openConnection();
-				httpConnection.setRequestMethod("GET");
+				httpConnection.setRequestMethod(requestMethod);
 				httpConnection.setDoOutput(true);
 				httpConnection.setDoInput(true);
 				httpConnection.setRequestProperty("Content-Type", "application/json");

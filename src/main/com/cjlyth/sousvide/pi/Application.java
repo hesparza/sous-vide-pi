@@ -14,6 +14,7 @@ public class Application {
 	public static void main(String[] args) {
 		Application application = new Application();
 		application.run(args);
+		System.exit(0);
 	}
 	
 	private void run(String[] args) {

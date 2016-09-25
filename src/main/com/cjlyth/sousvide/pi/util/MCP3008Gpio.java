@@ -21,6 +21,7 @@ public class MCP3008Gpio {
 	
 	public void execute() throws IOException, InterruptedException {
 		final String METHOD_NAME = getClass().getName() + ".execute()";
+		logger.info("{} reading temperature..", METHOD_NAME);
         // Create gpio controller
         final GpioController gpio = GpioFactory.getInstance();
 

@@ -32,15 +32,14 @@ public class MCP3008Gpio {
         // Provision gpio analog input pins for all channels of the MCP3008.
         // (you don't have to define them all if you only use a subset in your project)
         final GpioPinAnalogInput inputs[] = {
-                gpio.provisionAnalogInputPin(provider, MCP3008Pin.CH0, "MyAnalogInput-CH0"),
-                gpio.provisionAnalogInputPin(provider, MCP3008Pin.CH1, "MyAnalogInput-CH1")
+                gpio.provisionAnalogInputPin(provider, MCP3008Pin.CH0, "MyAnalogInput-CH0")
         };
         
         // Define the amount that the ADC input conversion value must change before
         // a 'GpioPinAnalogValueChangeEvent' is raised.  This is used to prevent unnecessary
         // event dispatching for an analog input that may have an acceptable or expected
         // range of value drift.
-        provider.setEventThreshold(100, inputs); // all inputs; alternatively you can set thresholds on each input discretely
+        provider.setEventThreshold(20, inputs); // all inputs; alternatively you can set thresholds on each input discretely
         
         // Set the background monitoring interval timer for the underlying framework to
         // interrogate the ADC chip for input conversion values.  The acceptable monitoring
@@ -49,7 +48,7 @@ public class MCP3008Gpio {
         // on a regular basis.  The higher this value the slower your application will get
         // analog input value change events/notifications.  Try to find a reasonable balance
         // for your project needs.
-        provider.setMonitorInterval(5000); // milliseconds   
+        provider.setMonitorInterval(500); // milliseconds   
         
         // Print current analog input conversion values from each input channel
         for(GpioPinAnalogInput input : inputs){
@@ -66,7 +65,7 @@ public class MCP3008Gpio {
                 double value = event.getValue();
 
                 // display output
-                System.out.println("<CHANGED VALUE> [" + event.getPin().getName() + "] : RAW VALUE = " + value);
+                logger.info("{} <CHANGED VALUE> [" + event.getPin().getName() + "] : RAW VALUE = " + value, METHOD_NAME);
             }
         };
         

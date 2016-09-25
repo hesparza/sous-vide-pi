@@ -58,7 +58,7 @@ public class SousvideServiceImpl implements SousvideService {
 	private String pythonExeAbsPath;
 	
 	@Value("${read.serial.script.abs.path}")
-	private String readSerailScriptAbsPath;
+	private String readSerialScriptAbsPath;
 	
 	private static final String GET = "GET";
 	private static final String POST = "POST";
@@ -112,15 +112,15 @@ public class SousvideServiceImpl implements SousvideService {
 		logger.info("{} Initilizing command line for python script", METHOD_NAME);
 		
 		CommandLine result;
-		Path scriptPath = Paths.get(readSerailScriptAbsPath);
+		Path scriptPath = Paths.get(readSerialScriptAbsPath);
 		boolean isScriptOk = Files.isRegularFile(scriptPath) && Files.isReadable(scriptPath) && Files.isExecutable(scriptPath);
 		if(!isScriptOk) {
-			logger.error("{} FATAL ERROR!! The provided python script for serail reading is not ok, please check permissions, file configured is: {}", METHOD_NAME, readSerailScriptAbsPath);
+			logger.error("{} FATAL ERROR!! The provided python script for serial reading is not ok, please check permissions, file configured is: {}", METHOD_NAME, readSerialScriptAbsPath);
 			result = null;
 		} else {
 			final String pythonScript = "pythonTemplate";
 			Map<String, File> configMap = new HashMap<>();
-			configMap.put(pythonScript, new File(readSerailScriptAbsPath));
+			configMap.put(pythonScript, new File(readSerialScriptAbsPath));
 			CommandLine cmdl = new CommandLine(pythonExeAbsPath);
 			cmdl.addArgument("${" + pythonScript + "}");
 			cmdl.setSubstitutionMap(configMap);
